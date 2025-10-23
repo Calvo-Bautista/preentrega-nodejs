@@ -1,9 +1,6 @@
-// La URL base de la API que vamos a usar
 const BASE_URL = 'https://fakestoreapi.com';
 
-// --- Funciones para interactuar con la API ---
 
-// Función para obtener TODOS los productos
 async function getAllProducts() {
   const response = await fetch(`${BASE_URL}/products`);
   const products = await response.json(); // Convertimos la respuesta a JSON
@@ -11,7 +8,6 @@ async function getAllProducts() {
   console.log(products);
 }
 
-// Función para obtener UN producto por su ID
 async function getProductById(id) {
   const response = await fetch(`${BASE_URL}/products/${id}`);
   const product = await response.json();
@@ -19,26 +15,47 @@ async function getProductById(id) {
   console.log(product);
 }
 
-// --- Lógica Principal para leer los comandos ---
+async function postProduct(product) {
+  fetch('https://fakestoreapi.com/products', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(product)
+})
+  .then(response => response.json())
+  .then(data => console.log(data)); 
+}
 
-// 1. Capturamos los argumentos que se escriben en la terminal.
-//    process.argv.slice(2) nos da un array como ['GET', 'products']
-const args = process.argv.slice(2);
+async function deleteProduct(id){
+  fetch(`https://fakestoreapi.com/products/${id}`, {
+    method: 'DELETE'
+  })
+    .then(response => response.json())
+    .then(data => console.log(data));
+}
 
-// 2. Guardamos los comandos en variables para que sea más claro.
-const command = args[0];   // El primer comando, ej: 'GET'
-const resource = args[1];  // El segundo, ej: 'products' o 'products/15'
+const command = process.argv[2];   // El primer comando, ej: 'GET'
+const resource = process.argv[3];  // El segundo, ej: 'products' o 'products/15'
 
-// 3. Decidimos qué función llamar según lo que se escribió.
-if (command === 'GET' && resource === 'products') {
+
+if (command.toUpperCase() === 'GET' && resource.toLowerCase() === 'products') {
   getAllProducts();
-} else if (command === 'GET' && resource.startsWith('products/')) {
-  // Si el recurso es 'products/15', lo separamos para obtener solo el '15'
+} 
+else if (command.toUpperCase() === 'GET' && resource.toLowerCase().startsWith('products/')) {
   const id = resource.split('/')[1];
   getProductById(id);
-} else {
-  // Si el comando no es válido, mostramos una ayuda
-  console.log('Comando no reconocido. Por favor, utiliza:');
-  console.log('npm run start GET products');
-  console.log('npm run start GET products/<id>');
+} 
+else if (command.toUpperCase() === 'POST' && resource.toLowerCase() === 'products'){
+  const titulo = process.argv[4];
+  const precio = process.argv[5];
+  const categoria = process.argv[6];
+  const product = {
+    title: titulo,
+    price: precio,
+    category: categoria
+  };
+  postProduct(product);
+}
+else if (command.toUpperCase() === 'DELETE' && resource.toLowerCase().startsWith("products/")) {
+  const id = resource.split("/")[1];
+  deleteProduct(id);
 }
