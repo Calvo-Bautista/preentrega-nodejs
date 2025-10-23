@@ -1,6 +1,7 @@
+// URL BASE
 const BASE_URL = 'https://fakestoreapi.com';
 
-
+// FUNCIONES QUE LLAMAN AL SERVIDOR
 async function getAllProducts() {
   const response = await fetch(`${BASE_URL}/products`);
   const products = await response.json(); // Convertimos la respuesta a JSON
@@ -33,10 +34,15 @@ async function deleteProduct(id){
     .then(data => console.log(data));
 }
 
+
+
+//COMANDOS BASE
 const command = process.argv[2];   // El primer comando, ej: 'GET'
 const resource = process.argv[3];  // El segundo, ej: 'products' o 'products/15'
 
 
+
+//FUNCIONES EN BASE A LOS PARAMETROS UTILIZADOS
 if (command.toUpperCase() === 'GET' && resource.toLowerCase() === 'products') {
   getAllProducts();
 } 
